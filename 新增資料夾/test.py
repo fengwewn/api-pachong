@@ -68,17 +68,17 @@ existing_contents = set()
 
 print("开始运行")
 print("请手动打开到WhatsApp页面")
-show_time_sleep_load(10)
+show_time_sleep_load(1)
 
 print("点击到需要发送的人/群组")
-print("倒计时5秒开始启动")
-show_time_sleep_load(5)
+print("倒计时3秒开始启动")
+show_time_sleep_load(3)
 
 print("开始天气警报")
 while True:
     print("获取api")
     weather_data = get_w()
-    if weather_data != None:
+    if weather_data != {}:
         print("api获取完成")
         for item in weather_data['details']:
             contents = item['contents']
@@ -92,8 +92,10 @@ while True:
                 time.sleep(2)
             #end if
         #end for
-        print("等待60秒")
-        show_time_sleep_load(60)
+    else:
+        print("api获取失败或者没有天气警告")
+    print("等待60秒")
+    show_time_sleep_load(60)
     
 #end while
     
