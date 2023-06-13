@@ -109,16 +109,38 @@ while True:
                 existing_contents.add(contents_hash)
                 warn_msg = weather_data[item]['name'] 
                 if  weather_data[item]['actionCode'] ==  'CANCEL':
-                    warn_msg += '已取消'
+                    warn_msg += '现已取消'
+                else:
+                    warn_msg += '现已生效'
+                    
+                    if weather_data[item]['name'] =='酷热天气警告':
+                        warn_msg += '''各分包請注意：
+                                    1. 在休息區為工友提供足夠的飲用水
+                                    2. 為工友提供合適的散熱裝置
+                                    3. 為工友安排適當的休息時間*
+
+                                    *每工作2小時至少有15分鐘休息時間以減低熱衰竭或中暑的風險
+                                    '''
+                    elif weather_data[item]['name'] =='雷暴警告':
+                         warn_msg += '''各分包請注意：
+                                        1. 部署排水措施
+                                        2. 暫停室外高空作業
+                                        3. 暫停電銲工作
+                                        '''
+                    #endif
+                #end if
                 #print(output_str)
                 print(warn_msg)
                 send(warn_msg)
                 time.sleep(2)
-            #end if
+            #endif
+        #end for
+        #暑热警告
         if msg !='':
-            shure = True
-            send(msg)
-            print(msg)
+            if shure == False:           
+                send(msg)
+                print(msg)
+                shure = True
         else:
             if shure == True:
                 print("暑热警告取消")
