@@ -3,6 +3,8 @@ import pyperclip
 import time
 import requests
 import json
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 # # 打开浏览器
 # pyautogui.hotkey("win", "r")
 # pyautogui.typewrite("chrome")
@@ -39,8 +41,8 @@ def send(message):
 def get_w():
 # 获取香港天文台的天气警报接口地址和参数
     url = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php'
-    #params = {'dataType': 'warnsum', 'lang': 'tc'}
-    params = {'dataType': 'warningInfo', 'lang': 'tc'}
+    params = {'dataType': 'warnsum', 'lang': 'tc'}
+    #params = {'dataType': 'warningInfo', 'lang': 'tc'}
     # 发送请求并获取响应
     response = requests.get(url, params=params)
 
@@ -65,7 +67,7 @@ def show_time_sleep_load(num):
 
 
 existing_contents = set()
-
+shure = False
 print("开始运行")
 print("请手动打开到WhatsApp页面")
 show_time_sleep_load(1)
@@ -78,19 +80,50 @@ print("开始天气警报")
 while True:
     print("获取api")
     weather_data = get_w()
+    driver = webdriver.Chrome()
+    url = 'https://www.hko.gov.hk/tc/'
+    driver.get(url)
+    try:
+        p_elem = driver.find_element('xpath', '//*[@id="ps0"]/div/div/div/div[4]/div[1]/p')
+        #print('找到目标元素')
+        msg =p_elem.text
+    except NoSuchElementException:
+        #print('未找到目标元素')
+        msg = ''
+    
+    driver.quit()
+    
     if weather_data != {}:
         print("api获取完成")
-        for item in weather_data['details']:
-            contents = item['contents']
+        # for item in weather_data['details']:
+        #     contents = item['contents']
+        for item in weather_data:
+            #contents = item['contents']
+            contents = weather_data[item]['name']
+            contents += weather_data[item]['issueTime']
         # 对 contents 值进行操作，例如打印出来
-            output_str = '\n'.join(contents)
-            contents_hash = hash(output_str)
+            # output_str = '\n'.join(contents)
+            # contents_hash = hash(output_str)
+            contents_hash = hash(contents)
             if contents_hash not in existing_contents:
                 existing_contents.add(contents_hash)
-                print(output_str)
-                send(output_str)
+                warn_msg = weather_data[item]['name'] 
+                if  weather_data[item]['actionCode'] ==  'CANCEL':
+                    warn_msg += '已取消'
+                #print(output_str)
+                print(warn_msg)
+                send(warn_msg)
                 time.sleep(2)
             #end if
+        if msg !='':
+            shure = True
+            send(msg)
+            print(msg)
+        else:
+            if shure == True:
+                print("暑热警告取消")
+                print(msg)
+                shure = False
         #end for
     else:
         print("api获取失败或者没有天气警告")
