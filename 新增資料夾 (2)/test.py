@@ -5,9 +5,6 @@ import requests
 import json
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
-import io
-import win32clipboard
-from PIL import Image
 # # 打开浏览器
 # pyautogui.hotkey("win", "r")
 # pyautogui.typewrite("chrome")
@@ -32,30 +29,14 @@ from PIL import Image
 # #pyautogui.typewrite("123")  # 输入联系人名称
 # time.sleep(2)
 # pyautogui.click(374, 309)  # 选择联系人
-def send_img(img):
-    send_to_clipboard(win32clipboard.CF_DIB, jpg_to_bmp(img))
-    send()
-
-def jpg_to_bmp(jpg_image):
-    bmp_image = io.BytesIO()
-    jpg_image.save(bmp_image, format='BMP')
-    bmp_data = bmp_image.getvalue()[14:]
-    bmp_image.close()
-    return bmp_data
-
-def send_to_clipboard(clip_type, data):
-    win32clipboard.OpenClipboard()
-    win32clipboard.EmptyClipboard()
-    win32clipboard.SetClipboardData(clip_type, data)
-    win32clipboard.CloseClipboard()
-def send(message=None):
+def send(message):
     #pyautogui.click(873, 995)  # 点击输入框
     #splits = ['雷暴警告', '天文台在6月8日下午11時40分發出之雷暴警告，有效時間延長至今日正午12時，預料香港有局部地區雷暴。', '雷暴發生時，請採取以下預防措施：', '1. 如身處室外，請到安全地方躲避。', '2. 離開水面。切勿在戶外游泳或進行其他戶外水上運動。', '3. 切勿站立於高地或接近導電的物體、樹木或桅杆。']
     
-    if message is not None:
-        pyperclip.copy(message)
-    pyautogui.hotkey('ctrl', 'v')
-    pyautogui.press('enter')
+    
+    pyperclip.copy(message)  # 输入消息
+    pyautogui.hotkey('Ctrl', 'V')
+    pyautogui.press("enter")  # 发送消息
 
 def get_w():
 # 获取香港天文台的天气警报接口地址和参数
@@ -84,12 +65,9 @@ def show_time_sleep_load(num):
 
 #main
 
-#全局变量
+
 existing_contents = set()
 shure = False
-leibaojg = Image.open('leibaojg.jpg')
-# huangsebaoyu = Image.open('huangsebaoyu.jpg')
-
 print("开始运行")
 print("请手动打开到WhatsApp页面")
 show_time_sleep_load(1)
@@ -139,11 +117,9 @@ while True:
                     
                     if weather_data[item]['name'] =='酷热天气警告':
                         warn_msg += '''，各分包請注意：\n\n1. 在休息區為工友提供足夠的飲用水\n2. 為工友提供合適的散熱裝置\n3. 為工友安排適當的休息時間*\n\n*每工作2小時至少有15分鐘休息時間以減低熱衰竭或中暑的風險'''
-                        
                     elif weather_data[item]['name'] =='雷暴警告':
-                        warn_msg += '''，各分包請注意：\n\n1. 部署排水措施\n2. 暫停室外高空作業\n3. 暫停電銲工作'''
-                        send_img(leibaojg)
-                        
+                         warn_msg += '''，各分包請注意：\n\n1. 部署排水措施\n2. 暫停室外高空作業\n3. 暫停電銲工作'''
+                    
                     #endif
                 #end if
                 #print(output_str)
