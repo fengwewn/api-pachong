@@ -88,6 +88,7 @@ def show_time_sleep_load(num):
 existing_contents = set()
 shure = False
 leibaojg = Image.open('leibaojg.jpg')
+kurejg = Image.open('kurejg.jpg')
 # huangsebaoyu = Image.open('huangsebaoyu.jpg')
 
 print("开始运行")
@@ -139,10 +140,13 @@ while True:
                     
                     if weather_data[item]['name'] =='酷热天气警告':
                         warn_msg += '''，各分包請注意：\n\n1. 在休息區為工友提供足夠的飲用水\n2. 為工友提供合適的散熱裝置\n3. 為工友安排適當的休息時間*\n\n*每工作2小時至少有15分鐘休息時間以減低熱衰竭或中暑的風險'''
+                        send_img(kurejg)
+                        time.sleep(2)
                         
                     elif weather_data[item]['name'] =='雷暴警告':
                         warn_msg += '''，各分包請注意：\n\n1. 部署排水措施\n2. 暫停室外高空作業\n3. 暫停電銲工作'''
                         send_img(leibaojg)
+                        time.sleep(2)
                         
                     #endif
                 #end if
